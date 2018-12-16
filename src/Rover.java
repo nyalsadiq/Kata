@@ -1,5 +1,3 @@
-import java.awt.event.MouseEvent;
-
 public class Rover {
 
     private Position position;
@@ -12,27 +10,53 @@ public class Rover {
         return position;
     }
 
-    public void move(Movement movement) {
+    public boolean move(Movement movement) {
+
         int move = 1;
 
+        // if we're given BACKWARD we can set move to -1,
+        // so we add -1 to coordinates.
         if (movement.equals(Movement.BACKWARD)) move = -1;
 
+
+        // Bit of a long winded way of doing things.
         switch (position.getDirection()) {
             case NORTH:
-                position.setY(position.getY() + move);
-                break;
+                int nextY = position.getY() + move;
+                if (scanForCollision(position.getX(), nextY)) return false;
+                position.setY(nextY);
+                return true;
+
             case EAST:
-                position.setX(position.getX() + move);
-                break;
+                int nextX = position.getX() + move;
+                if (scanForCollision(nextX, position.getY())) return false;
+                position.setX(nextX);
+                return true;
+
             case SOUTH:
-                position.setY(position.getY() - move);
-                break;
+                nextY = position.getY() - move;
+                if (scanForCollision(position.getX(), nextY)) return false;
+                position.setY(nextY);
+                return true;
+
             case WEST:
-                position.setX(position.getX() - move);
-                break;
+                nextX = position.getX() - move;
+                if (scanForCollision(nextX, position.getY())) return false;
+                position.setX(nextX);
+                return true;
+
             default:
-                return;
+                return false;
         }
+    }
+
+    // Check if our map has an obstacle at (x, y)
+    public boolean scanForCollision(int x, int y) {
+        Map map = Map.getInstance();
+        if (map.collisionCheck(new Position(x, y))) {
+            return true;
+        }
+        return false;
     }
 
     public void turn(Movement movement) {
@@ -71,15 +95,20 @@ public class Rover {
         }
     }
 
+
+    // Takes a string of commands and completes them, stopping
+    // if the rover comes across an obstacle.
     public void executeCommand(String commandList) {
         for (int i = 0; i < commandList.length(); i++) {
             switch (commandList.charAt(i)) {
                 case 'F':
-                    move(Movement.FORWARD);
-                    break;
+                    if (move(Movement.FORWARD)) break;
+                    System.out.println("Found obstacle at " + position.toString());
+                    return;
                 case 'B':
-                    move(Movement.BACKWARD);
-                    break;
+                    if (move(Movement.BACKWARD)) break;
+                    System.out.println("Found obstacle at " + position.toString());
+                    return;
                 case 'L':
                     turn(Movement.LEFT);
                     break;

@@ -93,4 +93,17 @@ public class RoverTest {
 
         assertEquals(expected.getDirection(), rover.getPosition().getDirection());
     }
+
+
+    @Test
+    public void testObstacleDetection() {
+        Rover rover = new Rover(0, 0, Direction.NORTH, 100, 100);
+        Map map = Map.getInstance();
+
+        map.addObstacle(new Position(0,2));
+        rover.executeCommand("FFRFF");
+
+        Integer expectedY = 1;
+        assertEquals(expectedY, rover.getPosition().getY());
+    }
 }
