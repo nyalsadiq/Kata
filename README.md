@@ -1,4 +1,4 @@
-# Pluto Rover Kata
+Kata
 
 ## Further Changes:
 * I would scrap the use of Enums for direction, so instead of using NORTH/SOUTH etc I could use the degree system (0/90/180) as it would make my move & turn functions less verbose - we could just add and subtract 90 degrees whenever we want to turn. This would also mean we could to turn more freely and not just in terms of 90 degrees. 
